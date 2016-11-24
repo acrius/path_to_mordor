@@ -20,3 +20,11 @@ WAIT_TIME = 0.5
 
 #Name of function for run travel.
 RUN_FUNCTION_NAME = 'run'
+
+#Browser(with selenium webdriver) to get html from urls.
+#Like as PhontomJS, Chrome and etc...
+#If None then used urllib.request.
+BROWSER = None
+
+#Time to render js(sec.).
+RENDER_WAIT_TIME = 2

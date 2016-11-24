@@ -5,9 +5,9 @@ Module contains classes to scraping.
 from time import sleep
 from re import match
 from concurrent import futures
+import urllib.request
 
 from bs4 import BeautifulSoup
-from selenium.webdriver import PhantomJS
 
 """
                                             Frodo.
@@ -30,11 +30,19 @@ class Frodo:
         self.wait_render = wait_render
         self.render_wait_time = rucksack.RENDER_WAIT_TIME
         self.current_concurrent_steps = 0
+        self.browser = self._get_browser(rucksack)
 
         self.start_page_url = start_page_url
         self.resource = self._get_resource(start_page_url)
         self._start_steps = self._create_steps(path)
 
+    @staticmethod
+    def _get_browser(rucksack):
+        if 'BROWSER' in rucksack.__dict__.keys() or not rucksack.BROWSER:
+            browser = BrowserSubstitute
+        else:
+            browser = rucksack.BROWSER
+        return browser
 
     @staticmethod
     def _get_resource(url):
@@ -54,9 +62,7 @@ class Frodo:
             page_text -> Source text of html page;
         """
         self._grab_region()
-        browser = PhantomJS()
-        browser.set_window_size(1440, 900)
-        print('Get url: ', url)
+        browser = self.browser()
         browser.get(url)
         begin_page_text = browser.page_source
         self._release_region()
@@ -132,3 +138,14 @@ class Step: #pylint: disable-msg=R0903
 
     def  __repr__(self):
         return '(Current action: {}, Next step: {})'.format(self.current_action, self.next_steps)
+
+class BrowserSubstitute:
+    def __init__(self):
+        self.page_source = ""
+
+    def get(self, url):
+        with urllib.request.urlopen(url) as request:
+            return request.read()
+
+    def close(self):
+        pass
