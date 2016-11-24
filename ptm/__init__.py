@@ -32,7 +32,7 @@ class Frodo:
         self.current_concurrent_steps = 0
 
         self.start_page_url = start_page_url
-        self.resource = self.get_resource(start_page_url)
+        self.resource = self._get_resource(start_page_url)
         self._start_steps = self._create_steps(path)
 
 
