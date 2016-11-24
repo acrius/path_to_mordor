@@ -3,6 +3,7 @@
 Module contains classes to scraping.
 """
 from time import sleep
+from re import match
 from concurrent import futures
 
 from bs4 import BeautifulSoup
@@ -16,7 +17,7 @@ class Frodo:
     """
     Class performs scraping.
     """
-    def __init__(self, resource, start_page_url, path, rucksack, wait_render=False):
+    def __init__(self, start_page_url, path, rucksack, wait_render=False):
         """
         Initial.
         Input:
@@ -31,9 +32,13 @@ class Frodo:
         self.current_concurrent_steps = 0
 
         self.start_page_url = start_page_url
-        self.resource = resource
+        self.resource = self.get_resource(start_page_url)
         self._start_steps = self._create_steps(path)
 
+
+    @staticmethod
+    def get_resource(url):
+        return match(r'^http[s]?://.*\.\w{1,3}/', url).group(0)
 
     """
                                             Get region.
