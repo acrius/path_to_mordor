@@ -37,7 +37,7 @@ class Frodo:
 
 
     @staticmethod
-    def get_resource(url):
+    def _get_resource(url):
         return match(r'^http[s]?://.*\.\w{1,3}/', url).group(0)
 
     """
