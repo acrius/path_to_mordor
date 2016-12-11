@@ -1,1 +1,1 @@
-Package Organization scripts based on bs4.
+Package to organization scraping based on bs4.
