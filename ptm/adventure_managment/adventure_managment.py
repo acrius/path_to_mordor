@@ -14,7 +14,7 @@ Called functions:
     start_adventure -> Called the galandriel script to create adventure;
     execute_spell -> Called the gendalf.py script to manage and run adventure;
 """
-from os import makedirs, listdir
+from os import getcwd, makedirs, listdir
 from os.path import basename, splitext, exists, isdir, join
 from sys import path
 from shutil import copytree, copy2
@@ -22,7 +22,6 @@ from argparse import ArgumentParser
 from importlib import machinery
 
 from .ptm_settings import PACKAGE_PATH, PROJECT_TEMPLATE_PATH, TRAVEl_TEMPLATE #pylint: disable-msg=E0401,C0301
-
 
 """
                                         Parse teminal args.
@@ -57,7 +56,7 @@ def _create_argparse(file_path):
     if character_name == 'galandriel':
         parser.add_argument('-sa', '--start_adventure', type=str,
                             help='Command to create "path_to_mordor" project.')
-    elif character_name == 'gendalf':
+    if character_name == 'gendalf' or character_name == 'galandriel':
         parser.add_argument('-cl', '--create_land', type=str,
                             help='Command to create land.')
         parser.add_argument('-ct', '--create_travel', type=str,
@@ -66,6 +65,12 @@ def _create_argparse(file_path):
                             help='Command to run travels')
     return parser
 
+
+"""
+==================================================================================================
+"""
+def collect_spells(work_dir):
+    return spells
 
 """
                                           (Galandriel)
