@@ -11,16 +11,19 @@ Classes describing the actions:
 from functools import reduce
 from operator import xor
 
-from .actions import Action #pylint: disable-msg=E0401
+from .actions import Action
 
-#The string is passed to gvalues as KeysRelationships to produce a dictionary with original keys.
+# The string is passed to gvalues as KeysRelationships to produce a dictionary with original keys.
 SOURCE_KEYS = 'source_keys'
+
 
 """
                                         Structure classes.
 ==================================================================================================
 """
-class KeyRealtionships: #pylint: disable-msg=R0903
+
+
+class KeyRealtionships:
     """
     A class describes the relationship keys or columns.
     The class is the implementation of Hashed dictionary.
@@ -67,7 +70,9 @@ class KeyRealtionships: #pylint: disable-msg=R0903
                                         Action classes.
 ==================================================================================================
 """
-class gtexts(Action): #pylint: disable-msg=R0903,C0103
+
+
+class gtexts(Action):
     """
     A class describes the action to get the text of the html item.
     """
@@ -92,14 +97,14 @@ class gtexts(Action): #pylint: disable-msg=R0903,C0103
                       result_list is list with result texts from html elements;
         """
         parent_url, parent_tag = parent
-        result_list = [tag.get_text(separator=self.separator).strip()\
-                       for tag in parent_tag.find_all(*self.args, **self.kwargs)
+        result_list = [tag.get_text(separator=self.separator).strip() for tag in
+                       parent_tag.find_all(*self.args, **self.kwargs)
                        if self.filter_function(parent_url, tag)]
-        result = result_list if len(result_list) > 1 else\
-                 (result_list[0] if result_list else None)
+        result = result_list if len(result_list) > 1 else (result_list[0] if result_list else None)
         return {key: result} if key else result
 
-class gattrs(Action): #pylint: disable-msg=R0903,C0103
+
+class gattrs(Action):
     """
     A class describes the action to get the value attribute of the page element.
     """
@@ -130,11 +135,11 @@ class gattrs(Action): #pylint: disable-msg=R0903,C0103
         result_list = [tag[self.target_attribute]
                        for tag in parent_tag.find_all(*self.args, **self.kwargs)
                        if self.filter_function(parent_url, tag)]
-        result = result_list if len(result_list) > 1 else\
-                 (result_list[0] if result_list else None)
+        result = result_list if len(result_list) > 1 else (result_list[0] if result_list else None)
         return {key: result} if key else result
 
-class gvalues: #pylint: disable-msg=C0103,R0903
+
+class gvalues:
     """
     A class describes the action to get the values for keyvalues pattern from html page.
     """
@@ -163,9 +168,9 @@ class gvalues: #pylint: disable-msg=C0103,R0903
                                                             self.values_action(parent))}
         else:
             print('Get result from ', parent[0])
-            result_dict = {keys_relations[key]: value\
+            result_dict = {keys_relations[key]: value
                            for key, value in zip(self.keys_action(parent),
-                                                 self.values_action(parent))\
+                                                 self.values_action(parent))
                            if key in keys_relations.keys()}
         result_dict['url'] = parent[0]
         return result_dict

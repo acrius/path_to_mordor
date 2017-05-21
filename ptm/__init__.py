@@ -9,32 +9,40 @@ import urllib.request
 
 from bs4 import BeautifulSoup
 
+
+__version__ = '0.0.1a'
+
+
 """
-                                            Frodo.
+                                            FrHabbitodo.
 ==================================================================================================
 """
-class Frodo:
+
+
+class Habbit:
+    start_page_url = ''
+    path = {}
+
     """
     Class performs scraping.
     """
-    def __init__(self, start_page_url, path, rucksack, wait_render=False):
+    def __init__(self, rucksack):
         """
         Initial.
         Input:
             start_page_url -> Url of start page to scraping;
             path -> Path of scraping;
-            ruksack -> Rucksack of Frodo; (Scraping settings);
+            ruksack -> Rucksack of Habbit; (Scraping settings);
         """
+        self.rucksack = rucksack
         self.max_concurrent_steps = rucksack.MAX_CONCURRENT_STEPS
         self.wait_time = rucksack.WAIT_TIME
-        self.wait_render = wait_render
         self.render_wait_time = rucksack.RENDER_WAIT_TIME
         self.current_concurrent_steps = 0
         self.browser = self._get_browser(rucksack)
 
-        self.start_page_url = start_page_url
         self.resource = self._get_resource(start_page_url)
-        self._start_steps = self._create_steps(path)
+        self._start_steps = self._create_steps()
 
     @staticmethod
     def _get_browser(rucksack):
@@ -66,7 +74,7 @@ class Frodo:
         browser.get(url)
         begin_page_text = browser.page_source
         self._release_region()
-        if self.wait_render and begin_page_text == browser.page_source:
+        if self.render_wait_time and begin_page_text == browser.page_source:
             sleep(self.render_wait_time)
         page_text = browser.page_source
         browser.close()
@@ -87,17 +95,16 @@ class Frodo:
         """
         self.current_concurrent_steps -= 1
 
-
     """
                                             Create steps.
     ==============================================================================================
     """
-    def _create_steps(self, path):
+    def _create_steps(self):
         """
         Create lists of steps.
         """
         steps = []
-        for action, next_step in path.items():
+        for action, next_step in self.path.items():
             steps.append(Step(action,
                               self._create_steps(next_step) if isinstance(next_step, dict)
                               else [Step(next_step, [])]))
@@ -125,7 +132,8 @@ class Frodo:
             for next_step in step.next_steps:
                 self._make_step(next_step, result)
 
-class Step: #pylint: disable-msg=R0903
+
+class Step:
     """
     Class for describing step of scraping,
     """
@@ -133,11 +141,12 @@ class Step: #pylint: disable-msg=R0903
         self.current_action = current_action
         self.next_steps = next_steps or []
 
-    def  __str__(self):
+    def __str__(self):
         return '(Current action: {}, Next step: {})'.format(self.current_action, self.next_steps)
 
-    def  __repr__(self):
+    def __repr__(self):
         return '(Current action: {}, Next step: {})'.format(self.current_action, self.next_steps)
+
 
 class BrowserSubstitute:
     def __init__(self):

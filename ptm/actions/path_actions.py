@@ -6,14 +6,16 @@ Classes describing the actions:
     - gblocks; #A class describes the action to get html from html page.
     - gresults; #A class describes the action to get results from ftml pages.
 """
-from .actions import Action, ThreadAction #pylint: disable-msg=E0401
+from .actions import Action, ThreadAction
 
 
 """
                                     Actions with load of pages.
 ==================================================================================================
 """
-class gpages(ThreadAction): #pylint: disable-msg=R0903, C0103
+
+
+class gpages(ThreadAction):
     """
     A class describes the action to get pages from url from html elements.
     """
@@ -33,8 +35,7 @@ class gpages(ThreadAction): #pylint: disable-msg=R0903, C0103
             yeild url, tag_of_page -> url of page, BeautifulSoup Tag of page;
         """
         _, parent_tag = parent
-        target_tags = parent_tag.find_all(*self.args, **self.kwargs)\
-                      if self.args else [parent_tag]
+        target_tags = parent_tag.find_all(*self.args, **self.kwargs) if self.args else [parent_tag]
         urls = self._get_urls(frodo.resource, target_tags)
         yield from self.get_pages(frodo, urls)
 
@@ -49,7 +50,8 @@ class gpages(ThreadAction): #pylint: disable-msg=R0903, C0103
         return ['{resource}{href}'.format(resource=resource, href=tag['href'])
                 for target_tag in target_tags for tag in target_tag.find_all('a')]
 
-class gpagins(ThreadAction): #pylint: disable-msg=R0903, C0103
+
+class gpagins(ThreadAction):
     """
     Class decribing action of getting pagination pages.
     """
@@ -88,8 +90,8 @@ class gpagins(ThreadAction): #pylint: disable-msg=R0903, C0103
         Input:
             parent_url -> Url to pagination;
         """
-        return ['{parent_url}/{pagin_template}{page_number}'\
-                .format(parent_url=parent_url,
+        return ['{parent_url}/{pagin_template}{page_number}'.format(
+                        parent_url=parent_url,
                         pagin_template=self.pagin_template,
                         page_number=page_number)
                 for page_number in range(self.start_page_number, self.finish_page_number + 1)]
@@ -98,14 +100,16 @@ class gpagins(ThreadAction): #pylint: disable-msg=R0903, C0103
         start_page_hash = self._hash_or_empty(self.start_page_number)
         finish_page_hash = self._hash_or_empty(self.finish_page_number)
         filter_function_hash = self._filter_function_hash()
-        return start_page_hash ^ finish_page_hash\
-             ^ filter_function_hash ^ hash(self.pagin_template)
+        return start_page_hash ^ finish_page_hash ^ filter_function_hash ^ hash(self.pagin_template)
+
 
 """
                                     Actions with finding html blocks.
 ==================================================================================================
 """
-class gblocks(Action): #pylint: disable-msg=R0903, C0103
+
+
+class gblocks(Action):
     """
     Class for find BeautifulSoup Tag in parent BeautifulSoup Tag.
     Class is the interface to BeautifulSoup "find_all".
@@ -130,15 +134,18 @@ class gblocks(Action): #pylint: disable-msg=R0903, C0103
             if self.filter_functions(tag):
                 yield (parent_url, tag)
 
+
 """
                                         Get results.
 ==================================================================================================
 """
-class gresults: #pylint: disable-msg=R0903, C0103
+
+
+class gresults:
     """
     Class to get result from parent BeautifulSoup Tag.
     """
-    def __init__(self, result_function, result_map=None):
+    def __init__(self, result_map=None):
         """
         Inital.
         Input:
@@ -147,7 +154,6 @@ class gresults: #pylint: disable-msg=R0903, C0103
                     result_set -> dictionary with results;
             result_map -> Dictionary with result fields(Keys) and result action;
         """
-        self.result_function = result_function
         self.result_map = result_map
 
     def __call__(self, frodo, parent):
@@ -161,7 +167,7 @@ class gresults: #pylint: disable-msg=R0903, C0103
         for result_name, result_action in self.result_map.items():
             result_set.update(result_action(parent, result_name))
         result_set['url'] = url
-        self.result_function(result_set)
+        frodo.pick_up(result_set)
         yield
 
     def __hash__(self):

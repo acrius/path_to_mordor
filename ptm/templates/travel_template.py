@@ -1,15 +1,12 @@
 """
 The module contains the rules of scraping.
 """
+from ptm import Habbit
 
-def run():
-    """
-    Run travel. This function triggers scraping.
-    """
-    pass
 
-def result_proccessing():
-    """
-    This function proccess the results.
-    """
-    pass
+class Frodo(Habbit):
+    start_page_url = ''
+    path = {}
+
+    def pcik_up(self, result_set):
+        pass

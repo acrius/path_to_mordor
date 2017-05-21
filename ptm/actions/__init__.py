@@ -9,11 +9,14 @@ from operator import xor
 
 from bs4 import BeautifulSoup
 
+
 """
                                         Base Action classes.
 ==================================================================================================
 """
-class Action: #pylint: disable-msg=R0903
+
+
+class Action:
     """
     The base class for scrapping actions.
     """
@@ -58,7 +61,8 @@ class Action: #pylint: disable-msg=R0903
     def _filter_function_hash(self):
         return hash(self.filter_function.__name__) if self.filter_function else hash('')
 
-class ThreadAction(Action): #pylint: disable-msg=R0903
+
+class ThreadAction(Action):
     """
     The base class for the actions of working with multiple threads.
     Thread used to load pages with Frodo.
@@ -93,7 +97,8 @@ class ThreadAction(Action): #pylint: disable-msg=R0903
         # for url in urls:
         #     yield url, BeautifulSoup(frodo.get_region(url), 'html.parser')
 
-class CheckPageRepeat: #pylint: disable-msg=R0903
+
+class CheckPageRepeat:
     """
     Class to check of page repeat.
     """

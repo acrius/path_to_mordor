@@ -3,11 +3,11 @@ Module to manage and run adventure.
 """
 import ruksack
 from ptm.adventure_managment import execute_spell
-from ptm.adventure_managment.spells.types import LOCAL_SPELL
+from ptm.adventure_managment.spells.types import GLOBAL_SPELL
 
 
 def execute():
-    execute_spell(LOCAL_SPELL, ruksack)
+    execute_spell(GLOBAL_SPELL)
 
 
 if __name__ == '__main__':
