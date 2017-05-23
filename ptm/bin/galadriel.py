@@ -1,7 +1,6 @@
 """
 Module to manage and run adventure.
 """
-import ruksack
 from ptm.adventure_managment import execute_spell
 from ptm.adventure_managment.spells.types import GLOBAL_SPELL
 
