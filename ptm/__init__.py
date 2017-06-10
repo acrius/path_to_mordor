@@ -10,7 +10,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 
-__version__ = '0.0.1a2'
+__version__ = '0.0.1a3'
 
 
 """
