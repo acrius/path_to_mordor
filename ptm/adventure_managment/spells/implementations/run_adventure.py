@@ -3,32 +3,34 @@ Module contains spell and recipe for run adventure.
 '''
 from importlib import machinery
 from os import listdir
-from os.path import join
+from os.path import join, isdir
 
-from . import Spell
-from .recipe import Recipe, Ingredient
+from .. import Spell
+from ..recipe import Recipe, Ingredient
 from .utils import apply
-from .types import LOCAL_SPELL
-from ... import Habbit
+from ..types import LOCAL_SPELL
+from .... import Habbit
 
 
-class RunAdventure:
+class RunAdventure(Spell):
     name = 'run'
     description = 'Run travels of adventure'
     type = LOCAL_SPELL
     recipe = Recipe(
         Ingredient(synonyms=['-t', '--travels'], type=str, description='Name of travel.'),
         Ingredient(synonyms=['-l', '--lands'], type=str, description='Name of land.'),
+        Ingredient(synonyms=['-s', '--sallies'], type=str, description='Name of sallies.'),
         Ingredient(synonyms=['-b', '--brotherhoods'], type=str,
                    description='Name of brotherhoods.'))
 
     def execute(self):
         self.travels = self.recipe.travels and self.recipe.travels.split(',')
+        self.sallies = self.recipe.sallies and self.recipe.sallies.split(',')
         self.brotherhoods = self.recipe.brotherhoods and self.recipe.brotherhoods.split(',')
         apply(lambda land: self._run(land), self._get_lands())
 
     def _get_lands(self):
-        return self.recipe.lands.split(',') if self.recipe.lands else self.rucksack.TRAVEL_PATH
+        return self.recipe.lands.split(',') if self.recipe.lands else self.rucksack.TRAVELS_PATH
 
     def _run(self, travel_path):
         """
@@ -40,13 +42,17 @@ class RunAdventure:
             self._run_travel(machinery.SourceFileLoader('travel', travel_path).load_module())
 
     def _run_travel(self, travel):
-        if (not self.brotherhoods) or ((self.brotherhoods and 'BROTHERHOODS' in travel.__dict__)
-                                       and self.brotherhoods.issubset(travel.BROTHERHOODS)):
+        if (not self.sallies) or ((self.sallies and 'SALLIES' in travel.__dict__)
+                                        and self.sallies.issubset(travel.SALLIES)):
             apply(lambda habbit: _run_habbit(habbit, rucksack), _get_habbits(travel))
 
-    @staticmethod
-    def _get_habbits(travel):
-        return filter(lambda part: isinstance(part, Habbit), travel.__dict__.values())
+    def _get_habbits(self, travel):
+        return filter(lambda part: isinstance(part, Habbit) and self._included_in_brotherhood(part),
+                      travel.__dict__.values())
+
+    def _included_in_brotherhood(self, habbit):
+        return True if 'brotherhoods' in habbit.__dict__ \
+            and self.brotherhoods.issubset(habbit.brotherhoods) else False
 
     def _run_habbit(self, habbit):
         frodo = habbit(self.rucksack)

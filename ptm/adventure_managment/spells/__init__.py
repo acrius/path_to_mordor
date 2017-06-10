@@ -22,33 +22,20 @@ from .recipe import Recipe
 
 from .types import GLOBAL_SPELL, LOCAL_SPELL
 
-from start_adventure import StartAdventure
-from create_land import CreateLand
-from create_travel import CreateTravel
-from run_adventure import RunAdventure
-
 
 class Spell:
     name = 'spell'
     description = ''
-    type = (rucksack and LOCAL_SPELL) or GLOBAL_SPELL
-
-    recipe = Recipe([])
 
     def __init__(self, rucksack):
         self.rucksack = rucksack
+        self.type = (rucksack and LOCAL_SPELL) or GLOBAL_SPELL
         self.adventure_path = self._get_adventure_path()
+
+        #recipe = Recipe([])
 
     def _get_adventure_path(self):
         return (self.rucksack and self.rucksack.ADVENTURE_PATH) or getcwd()
 
     def execute(self):
         pass
-
-
-spells = (
-    StartAdventure,
-    CreateLand,
-    CreateTravel,
-    RunAdventure
-)

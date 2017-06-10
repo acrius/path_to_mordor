@@ -13,8 +13,7 @@ def make_package(package_path: str):
     '''
     if not exists(package_path) or not isdir(package_path):
         makedirs(package_path)
-        init_path = join(package_path, '__init__.py')
-        _make_module(init_path)
+        make_module(join(package_path, '__init__.py'))
 
 
 def make_module(module_path: str):
