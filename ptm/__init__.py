@@ -41,7 +41,7 @@ class Habbit:
         self.current_concurrent_steps = 0
         self.browser = self._get_browser(rucksack)
 
-        self.resource = self._get_resource(start_page_url)
+        self._set_resource_from_url(self.start_page_url)
         self._start_steps = self._create_steps()
 
     @staticmethod
@@ -52,9 +52,11 @@ class Habbit:
             browser = rucksack.BROWSER
         return browser
 
-    @staticmethod
-    def _get_resource(url):
-        return match(r'^http[s]?://.*\.\w{1,3}/', url).group(0)
+    def _set_resource_from_url(self, url):
+        try:
+            self.resource = match(r'^http[s]?://.*\.\w{1,3}', url).group(0)
+        except ValueError:
+            print(ValueError)
 
     """
                                             Get region.

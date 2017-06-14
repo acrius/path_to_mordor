@@ -6,7 +6,7 @@ Classes describing the actions:
     - gblocks; #A class describes the action to get html from html page.
     - gresults; #A class describes the action to get results from ftml pages.
 """
-from .actions import Action, ThreadAction
+from . import Action, ThreadAction
 
 
 """
