@@ -4,6 +4,7 @@ For parsing used BeautifulSoup.
 BeautifulSoup documetnation: https://www.crummy.com/software/BeautifulSoup/bs4/doc/.
 """
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections import MutableMapping
 from functools import reduce
 from operator import xor
 
@@ -35,7 +36,6 @@ class Action:
         """
         self.args = args
         self.kwargs = kwargs
-        self.filter_function = kwargs.get('filter_function') or (lambda url, bs_tag: True)
 
     """
     ____________________________________________hash__________________________________________
@@ -44,22 +44,18 @@ class Action:
     def __hash__(self):
         kwargs_hash = self._get_kwargs_hash(self.kwargs)
         args_hash = reduce(xor, map(hash, self.args)) if self.args else hash('')
-        filter_function_hash = self._filter_function_hash()
-        return kwargs_hash ^ args_hash ^ filter_function_hash
+        return kwargs_hash ^ args_hash
 
     def _get_kwargs_hash(self, kwargs):
         kwargs_hash = hash('')
         for key, value in kwargs.items():
-            kwargs_hash ^= self._get_kwargs_hash(value) if isinstance(value, dict)\
+            kwargs_hash ^= self._get_kwargs_hash(value) if isinstance(value, MutableMapping)\
                                                    else hash(key) ^ hash(value)
         return kwargs_hash
 
     @staticmethod
     def _hash_or_empty(value):
         return hash(value) if value else hash('')
-
-    def _filter_function_hash(self):
-        return hash(self.filter_function.__name__) if self.filter_function else hash('')
 
 
 class ThreadAction(Action):
@@ -74,7 +70,7 @@ class ThreadAction(Action):
         super().__init__(*args, **kwargs)
         self.max_workers = 20
 
-    def get_pages(self, frodo, urls):
+    def get_pages(self, robber, urls):
         """
         Get BeautifulSoup Tag of pages from urls.
         Input:
@@ -85,7 +81,7 @@ class ThreadAction(Action):
         """
         check_page_repeat = CheckPageRepeat()
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            future_set = {executor.submit(frodo.get_region, url): url for url in urls}
+            future_set = {executor.submit(robber.get_region, url): url for url in urls}
             for future in as_completed(future_set):
                 page_text = future.result()
                 page_tag = BeautifulSoup(page_text, 'html.parser')

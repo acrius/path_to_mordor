@@ -25,7 +25,7 @@ class gpages(ThreadAction):
         """
         super().__init__(*args, **kwargs)
 
-    def __call__(self, frodo, parent):
+    def __call__(self, habbit, parent):
         """
         Run action.
         Input:
@@ -37,7 +37,7 @@ class gpages(ThreadAction):
         _, parent_tag = parent
         target_tags = parent_tag.find_all(*self.args, **self.kwargs) if self.args else [parent_tag]
         urls = self._get_urls(frodo.resource, target_tags)
-        yield from self.get_pages(frodo, urls)
+        yield from self.get_pages(habbit._robber, urls)
 
     @staticmethod
     def _get_urls(resource, target_tags):
@@ -71,7 +71,7 @@ class gpagins(ThreadAction):
         self.start_page_number = start_page_number if start_page_number else 1
         self.finish_page_number = finish_page_number if finish_page_number else 1000000
 
-    def __call__(self, frodo, parent):
+    def __call__(self, habbit, parent):
         """
         Run action.
         Input:
@@ -82,7 +82,7 @@ class gpagins(ThreadAction):
         """
         parent_url, _ = parent
         urls = self._get_urls(parent_url)
-        yield from self.get_pages(frodo, urls)
+        yield from self.get_pages(habbit._robber, urls)
 
     def _get_urls(self, parent_url):
         """
@@ -172,3 +172,11 @@ class gresults:
 
     def __hash__(self):
         return hash('results')
+
+
+class path_selection:
+    def __init__(self, condition, true_path, false_path):
+        pass
+
+class combine:
+    pass

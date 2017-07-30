@@ -1,32 +1,33 @@
-#pylint: disable-msg=C0103
-"""
-Module contains classes to scraping.
-"""
+"""Module contains classes to scraping."""
 from time import sleep
 from re import match
 from concurrent import futures
 import urllib.request
+import logging
 
 from bs4 import BeautifulSoup
+
+from .robber import Robber
+from .path import Path
+from .actions import Action
+from .utils import get_standart_rucksack
 
 
 __version__ = '0.0.1a4'
 
 
 """
-                                            FrHabbitodo.
+                                            Habbit.
 ==================================================================================================
 """
 
 
 class Habbit:
+    """Class performs scraping."""
     start_page_url = ''
     path = {}
 
-    """
-    Class performs scraping.
-    """
-    def __init__(self, rucksack):
+    def __init__(self, rucksack=None):
         """
         Initial.
         Input:
@@ -34,68 +35,16 @@ class Habbit:
             path -> Path of scraping;
             ruksack -> Rucksack of Habbit; (Scraping settings);
         """
-        self.rucksack = rucksack
-        self.max_concurrent_steps = rucksack.MAX_CONCURRENT_STEPS
-        self.wait_time = rucksack.WAIT_TIME
-        self.render_wait_time = rucksack.RENDER_WAIT_TIME
-        self.current_concurrent_steps = 0
-        self.browser = self._get_browser(rucksack)
-
+        self.rucksack = rucksack or get_standart_rucksack()
         self._set_resource_from_url(self.start_page_url)
         self._start_steps = self._create_steps()
-
-    @staticmethod
-    def _get_browser(rucksack):
-        if 'BROWSER' in rucksack.__dict__.keys() or not rucksack.BROWSER:
-            browser = BrowserSubstitute
-        else:
-            browser = rucksack.BROWSER
-        return browser
+        self._robber = Robber(rucksack)
 
     def _set_resource_from_url(self, url):
         try:
             self.resource = match(r'^http[s]?://.*\.\w{1,3}', url).group(0)
         except ValueError:
-            print(ValueError)
-
-    """
-                                            Get region.
-    ==============================================================================================
-    Region is a text of html page.
-    """
-    def get_region(self, url):
-        """
-        Get page of text from url.
-        Input:
-            url -> Url address of page;
-        Output:
-            page_text -> Source text of html page;
-        """
-        self._grab_region()
-        browser = self.browser()
-        browser.get(url)
-        begin_page_text = browser.page_source
-        self._release_region()
-        if self.render_wait_time and begin_page_text == browser.page_source:
-            sleep(self.render_wait_time)
-        page_text = browser.page_source
-        browser.close()
-        return page_text
-
-    def _grab_region(self):
-        """
-        Wait one's turn.
-        Increase counter self.current_concurrent_steps with grab.
-        """
-        while self.current_concurrent_steps >= self.max_concurrent_steps:
-            sleep(self.wait_time)
-        self.current_concurrent_steps += 1
-
-    def _release_region(self):
-        """
-        Release region.
-        """
-        self.current_concurrent_steps -= 1
+            logging.error(ValueError)
 
     """
                                             Create steps.
@@ -106,11 +55,24 @@ class Habbit:
         Create lists of steps.
         """
         steps = []
-        for action, next_step in self.path.items():
+        for current_step, next_step in self.path.items():
+
+
             steps.append(Step(action,
                               self._create_steps(next_step) if isinstance(next_step, dict)
                               else [Step(next_step, [])]))
         return steps
+
+    @staticmethod
+    def _get_current_step(current_step):
+        step = None
+        if isinstance(current_step, Path):
+            step =
+        elif isinstance(current_step, Action):
+            step = current_step
+        else:
+            raise TypeError
+        return step
 
     """
                                             Run adventure.
@@ -148,15 +110,3 @@ class Step:
 
     def __repr__(self):
         return '(Current action: {}, Next step: {})'.format(self.current_action, self.next_steps)
-
-
-class BrowserSubstitute:
-    def __init__(self):
-        self.page_source = ""
-
-    def get(self, url):
-        with urllib.request.urlopen(url) as request:
-            return request.read()
-
-    def close(self):
-        pass

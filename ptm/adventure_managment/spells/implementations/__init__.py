@@ -1,3 +1,4 @@
+"""The modile contains list of implementations of `Spell`."""
 from .start_adventure import StartAdventure
 from .create_land import CreateLand
 from .create_travel import CreateTravel

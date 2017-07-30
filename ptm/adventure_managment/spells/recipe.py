@@ -1,9 +1,24 @@
+"""
+Module contains classes for creating `Spell` `Recipe`.
+"""
 from re import match
 from collections import namedtuple
 from typing import List, NamedTuple, Any
 
 
 class Ingredient(NamedTuple):
+    """
+    `Ingredient` of `Recipe`.
+
+    Used to define the command argument.
+
+        :param synonyms: Names of argument;
+        :param type: Type of argument;
+        :param description: Helpstring of argument;
+        :param default: Default value of argument;
+
+        :param value: Value of argument;
+    """
     synonyms: List[str]
     type: Any
     description: str
@@ -12,6 +27,11 @@ class Ingredient(NamedTuple):
 
 
 class Recipe:
+    """
+    `Recipe` if `Spell`. Used to specify the command arguments.
+
+        :param ingredients: List of `Ingreients`.
+    """
     ingredients: List = []
 
     def __init__(self, *ingredients):
@@ -73,3 +93,6 @@ class Recipe:
 
     def __iter__(self):
         return self.ingredients.__iter__()
+
+    def __repr__(self):
+        return ''

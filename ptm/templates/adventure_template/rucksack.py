@@ -3,7 +3,7 @@ Module contains settings of adventure.
 """
 from os.path import dirname, abspath, join
 
-import extensions
+import artifacts
 
 # Project path.
 ADVENTURE_PATH = dirname(abspath(__file__))
@@ -28,4 +28,4 @@ BROWSER = None
 # Time to render js(sec.).
 RENDER_WAIT_TIME = 2
 
-EXTENSIONS = extensions
+ARTIFACTS = artifacts
