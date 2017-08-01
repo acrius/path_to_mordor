@@ -1,3 +1,6 @@
+'''
+
+'''
 from collections import Iterable
 from actions import Action
 
@@ -13,7 +16,7 @@ class Sandbox:
 
 
 class Map:
-    def __init__(self, start_actions):
+    def __init__(self, *start_actions):
         self.adjacencies = {}
         self.nodes_count = 0
 
@@ -51,3 +54,9 @@ class Map:
 
     def __len__(self):
         return len(self.adjacencies.keys())
+
+def _from(*actions):
+    start_actions = actions
+    while True:
+
+    return Map(actions)
