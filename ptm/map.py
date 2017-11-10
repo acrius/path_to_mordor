@@ -11,6 +11,10 @@ class Sandbox:
         self.action = action
         self.is_finish = action.is_finish if hasattr(action, 'is_finish') else False
 
+    @property
+    def is_finish(self):
+        
+
     def __hash__(self):
         return hash(self.action) ^ hash(self.index)
 

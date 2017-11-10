@@ -37,7 +37,6 @@ class Habbit:
         """
         self.rucksack = rucksack or get_standart_rucksack()
         self._set_resource_from_url(self.start_page_url)
-        self._start_steps = self._create_steps()
         self._robber = Robber(rucksack)
 
     def _set_resource_from_url(self, url):
@@ -45,34 +44,6 @@ class Habbit:
             self.resource = match(r'^http[s]?://.*\.\w{1,3}', url).group(0)
         except ValueError:
             logging.error(ValueError)
-
-    """
-                                            Create steps.
-    ==============================================================================================
-    """
-    def _create_steps(self):
-        """
-        Create lists of steps.
-        """
-        steps = []
-        for current_step, next_step in self.path.items():
-
-
-            steps.append(Step(action,
-                              self._create_steps(next_step) if isinstance(next_step, dict)
-                              else [Step(next_step, [])]))
-        return steps
-
-    @staticmethod
-    def _get_current_step(current_step):
-        step = None
-        if isinstance(current_step, Path):
-            step =
-        elif isinstance(current_step, Action):
-            step = current_step
-        else:
-            raise TypeError
-        return step
 
     """
                                             Run adventure.
